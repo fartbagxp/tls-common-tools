@@ -21,7 +21,12 @@ if [[ "${WEBSITE}" != "https://"* ]]; then
   exit
 fi;
 
-RESULTS=$(curl -sI ${WEBSITE} 2>&1 | grep -i strict-transport-security)
+HTTPS="https://"
+SITE_URL=${WEBSITE#"$HTTPS"}
+DNS_RESULT=$(dig +short ${SITE_URL})
+echo "$WEBSITE resolves to $DNS_RESULT."
+
+RESULTS=$(curl -sI --resolve ${WEBSITE}:443:${WEBSITE} ${WEBSITE} 2>&1 | grep -i strict-transport-security)
 if [[ -z "${RESULTS// }" ]]; then
   echo Could not resolve "$WEBSITE".
   exit
