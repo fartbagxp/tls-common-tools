@@ -26,7 +26,8 @@ SITE_URL=${WEBSITE#"$HTTPS"}
 DNS_RESULT=$(dig +short ${SITE_URL})
 echo "$WEBSITE resolves to $DNS_RESULT."
 
-RESULTS=$(curl -sI --resolve ${WEBSITE}:443:${WEBSITE} ${WEBSITE} 2>&1 | grep -i strict-transport-security)
+# Test the original site
+RESULTS=$(curl -sI --resolve ${WEBSITE}:443:${DNS_RESULT} ${WEBSITE} 2>&1 | grep -i strict-transport-security)
 if [[ -z "${RESULTS// }" ]]; then
   echo Could not resolve "$WEBSITE".
   exit
@@ -37,4 +38,16 @@ if [[ "${RESULTS}" != "${EXPECTED_VALUE}"* ]]; then
   echo instead got: "${RESULTS}"
 else
   echo "$WEBSITE" supports HTTPS and proper HSTS.
+fi;
+
+# Check for redirection
+REDIRECT_WEBSITE=$(curl -Ls -o /dev/null --resolve ${WEBSITE}:443:${DNS_RESULT} -w %{url_effective} ${WEBSITE})
+if [[ ${REDIRECT_WEBSITE} != ${WEBSITE} ]]; then
+  RESULTS=$(curl -sI --resolve ${WEBSITE}:443:${DNS_RESULT} ${REDIRECT_WEBSITE} 2>&1 | grep -i strict-transport-security)
+  if [[ "${RESULTS}" != "${EXPECTED_VALUE}"* ]]; then
+    echo was expecting: "${EXPECTED_VALUE}"
+    echo instead got: "${RESULTS}"
+  else
+    echo "$REDIRECT_WEBSITE" as redirection link supports HTTPS and proper HSTS.
+  fi;
 fi;

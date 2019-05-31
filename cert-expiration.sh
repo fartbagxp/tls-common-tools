@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# TODO:
+# TODO: notify automatically for certificate expiration
 
 TOP_LEVEL_DOMAIN=$1
 # curl -s https://certspotter.com/api/v0/certs?domain=${TOP_LEVEL_DOMAIN} | jq .[].issuer | sort | uniq -c | sort -rn
@@ -19,3 +19,4 @@ FIRST_RESULT=$(curl "https://api.certspotter.com/v1/issuances?domain=${TOP_LEVEL
 
 # while result is not nil
 # keep curl with &after= parameter
+

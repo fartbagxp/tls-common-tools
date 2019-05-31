@@ -8,7 +8,7 @@ This is a common tools storage for storing various scripts useful for checking a
 
 [Qualys SSL Labs](https://www.ssllabs.com)
 
-[Security Headers](https://www.securityheaders.com)
+[Quick checks with Security Headers](https://www.securityheaders.com)
 
 ## Security Headers
 
@@ -33,3 +33,5 @@ This is a common tools storage for storing various scripts useful for checking a
 https://itmodernization.cio.gov/report/shared-services/
 https://itmodernization.cio.gov/report/appendices/cloud-security-protections/
 https://itmodernization.cio.gov/report/appendices/challenges-to-perimeter-security/
+https://pulse.cio.gov/data/hosts/va.gov/https.csv
+https://pulse.cio.gov/https/guidance/#subdomains
