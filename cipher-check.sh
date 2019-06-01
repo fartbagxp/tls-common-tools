@@ -6,6 +6,16 @@
 # Usage example: bash cipher-check.sh https://www.va.gov
 #########################################################################################
 
+if ! type openssl >/dev/null 2>&1; then
+  echo "openssl is not installed. Must have openssl to proceed." 
+  exit 1
+fi
+
+if ! type nmap >/dev/null 2>&1; then
+  echo "nmap is not installed. Must have nmap to proceed." 
+  exit 1
+fi
+
 SERVER=$1
 if [ $# != 1 ]; then
   echo "Usage: $0 <server-to-check>"
