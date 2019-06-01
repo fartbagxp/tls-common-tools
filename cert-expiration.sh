@@ -1,22 +1,28 @@
 #!/usr/bin/env bash
 
-# TODO: notify automatically for certificate expiration
+#########################################################################################
+# This script checks the certificate expiration date for a host and was taken from 
+# https://stackoverflow.com/a/47878528.
+#
+# Usage example: bash cert-expiration.sh va.gov
+#########################################################################################
+if [ -z "$1" ]
+then
+  echo "domain name missing"
+  exit 1
+fi
 
-TOP_LEVEL_DOMAIN=$1
-# curl -s https://certspotter.com/api/v0/certs?domain=${TOP_LEVEL_DOMAIN} | jq .[].issuer | sort | uniq -c | sort -rn
+name="$1"
+shift
 
-# curl -s https://certspotter.com/api/v0/certs?domain=${TOP_LEVEL_DOMAIN} | jq '.[] | {dns_names,issuer,not_before,not_after}'
-# curl -s https://certspotter.com/api/v0/certs?domain=${TOP_LEVEL_DOMAIN} | jq -s -c '.[] | sort_by(.not_after)' | jq '[.[] | {dns_names,issuer,not_before,not_after}]'
+now_epoch=$( date +%s )
 
-#cat test.json | jq -s -c '.[] | sort_by(.not_after)' | jq '[.[] | {issuer,not_before,not_after}]' | jq -r '(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv'
-
-# cat test.json | jq -s -c '.[] | sort_by(.not_after)' | jq '[.[] | {dns_names: .dns_names | join("|"), issuer: .issuer, not_before: .not_before, not_after: .not_after}]' | jq -r '(map(keys) | add | unique) as $cols | map(. as $row | $cols | map($row[.])) as $rows | $cols, $rows[] | @csv'
-
-# {id: .id, hashtags: .hashtags | join(";")}
-# {"code":"rate_limited","message":"You have exceeded the domain search rate limit for the Cert Spotter API.  Please try again later, or authenticate with an API key."}
-
-FIRST_RESULT=$(curl "https://api.certspotter.com/v1/issuances?domain=${TOP_LEVEL_DOMAIN}&include_subdomains=true&expand=dns_names&expand=issuer&expand=cert")
-
-# while result is not nil
-# keep curl with &after= parameter
-
+dig +noall +answer $name | while read _ _ _ _ ip;
+do
+  echo -n "$ip:"
+  expiry_date=$( echo | openssl s_client -showcerts -servername $name -connect $ip:443 2>/dev/null | openssl x509 -inform pem -noout -enddate | cut -d "=" -f 2 )
+  echo -n " $expiry_date";
+  expiry_epoch=$( date -d "$expiry_date" +%s )
+  expiry_days="$(( ($expiry_epoch - $now_epoch) / (3600 * 24) ))"
+  echo "    $expiry_days days"
+done
