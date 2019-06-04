@@ -6,11 +6,13 @@ It is meant to provide an independent audit for a particular site in compliance 
 
 The goal is to be able to reproduce results of the [pulse.cio.gov portal](https://pulse.cio.gov/https/domains/) manually and automatically.
 
+This is on many levels similar to [PSHTT](https://github.com/cisagov/pshtt), which is the engine behind the Pulse portal.
+
 ## Common audit questions to answer
 
-- What IP address(es) is the web server hosted on?
+- What IP address(es) is the web server or load balancer hosted on?
 - Does the website support IPv6 connectivity?
-- Does the web server should support port 80 and port 443?
+- Does the web server support port 80 and port 443?
 - Does the website on port 80 redirect to port 443 on initial connection?
 - Does the initial connection to port 443 support HSTS - `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`?
 - Does subsequent redirection after the initial connection support HSTS - `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`?
