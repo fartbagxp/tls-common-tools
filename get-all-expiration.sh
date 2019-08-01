@@ -24,6 +24,7 @@ print_all_certs() {
     temp="${i%\"}"
     temp="${temp#\"}"
     bash cert-expiration.sh ${temp}
+    bash cert-expiration.sh www.${temp}
   done
 }
 

@@ -24,5 +24,7 @@ do
   echo -n "$expiry_date,";
   expiry_epoch=$( date -d "$expiry_date" +%s )
   expiry_days="$(( ($expiry_epoch - $now_epoch) / (3600 * 24) ))"
-  echo "$expiry_days days"
+  expiry_time="$(( $expiry_epoch - $now_epoch )) "
+  echo -n "$expiry_days days,"
+  echo "$expiry_time"
 done
