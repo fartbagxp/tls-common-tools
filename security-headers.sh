@@ -33,11 +33,11 @@ fi;
 
 HTTPS="https://"
 SITE_URL=${WEBSITE#"$HTTPS"}
-DNS_RESULT=$(dig +short ${SITE_URL})
+DNS_RESULT=$(dig +short "${SITE_URL}")
 echo "$WEBSITE resolves to $DNS_RESULT."
 
 # Test the original site for HSTS compliance
-RESULTS=$(curl -sI --resolve ${WEBSITE}:443:${DNS_RESULT} ${WEBSITE} 2>&1 | grep -i strict-transport-security)
+RESULTS=$(curl -sI --resolve "${WEBSITE}":443:"${DNS_RESULT}" "${WEBSITE}" 2>&1 | grep -i strict-transport-security)
 if [[ -z "${RESULTS// }" ]]; then
   echo Could not resolve "$WEBSITE".
   exit
@@ -51,9 +51,9 @@ else
 fi;
 
 # Check the redirection link for compliance
-REDIRECT_WEBSITE=$(curl -Ls -o /dev/null --resolve ${WEBSITE}:443:${DNS_RESULT} -w %{url_effective} ${WEBSITE})
-if [[ ${REDIRECT_WEBSITE} != ${WEBSITE} ]]; then
-  RESULTS=$(curl -sI --resolve ${WEBSITE}:443:${DNS_RESULT} ${REDIRECT_WEBSITE} 2>&1 | grep -i strict-transport-security)
+REDIRECT_WEBSITE=$(curl -Ls -o /dev/null --resolve "${WEBSITE}":443:"${DNS_RESULT}" -w "%{url_effective}" "${WEBSITE}")
+if [[ ${REDIRECT_WEBSITE} != "${WEBSITE}" ]]; then
+  RESULTS=$(curl -sI --resolve "${WEBSITE}":443:"${DNS_RESULT}" "${REDIRECT_WEBSITE}" 2>&1 | grep -i strict-transport-security)
   if [[ "${RESULTS}" != "${EXPECTED_VALUE}"* ]]; then
     echo was expecting: "${EXPECTED_VALUE}"
     echo instead got: "${RESULTS}"

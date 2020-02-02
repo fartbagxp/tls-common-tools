@@ -15,17 +15,17 @@ fi
 name="$1"
 
 print_all_certs() {
-  echo ${1}
-  curl https://pulse.cio.gov/data/hosts/${1}/https.csv -o ${1}.csv
-  readarray -t domains < <(cut -d, -f1 ${1}.csv)
+  echo "${1}"
+  curl https://pulse.cio.gov/data/hosts/"${1}"/https.csv -o "${1}".csv
+  readarray -t domains < <(cut -d, -f1 "${1}".csv)
 
   for i in "${domains[@]}"
   do 
     temp="${i%\"}"
     temp="${temp#\"}"
-    bash cert-expiration.sh ${temp}
-    bash cert-expiration.sh www.${temp}
+    bash cert-expiration.sh "${temp}"
+    bash cert-expiration.sh www."${temp}"
   done
 }
 
-print_all_certs ${name}
+print_all_certs "${name}"
